@@ -2,14 +2,10 @@ services:
   db:
     image: ghcr.io/baosystems/postgis:16-3.4
     container_name: ais_postgres
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "${PGPORT}:5432"
     restart: unless-stopped
 
 volumes:
