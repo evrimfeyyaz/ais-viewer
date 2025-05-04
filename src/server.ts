@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import Fastify from "fastify";
 import pool, { initializeDatabase } from "./db";
 import { startIngestionService } from "./ingestion-service";
+import { startMaintenanceSchedule } from "./maintenance-service";
 
 dotenv.config();
 
@@ -20,9 +21,7 @@ server.get("/health", async (_request, reply) => {
     }
   } catch (err) {
     server.log.error("Health check failed:", err);
-    reply
-      .code(503)
-      .send({ status: "error", error: "Database connection failed" });
+    reply.code(503).send({ status: "error", error: "Database connection failed" });
   }
 });
 
@@ -36,6 +35,8 @@ const start = async () => {
 
     const port = parseInt(process.env.PORT || "3000", 10);
     await server.listen({ port: port, host: "0.0.0.0" });
+
+    startMaintenanceSchedule();
   } catch (err) {
     server.log.error("Error during server startup:", err);
     process.exit(1);
