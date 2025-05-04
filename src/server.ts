@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import Fastify from "fastify";
 import pool, { initializeDatabase } from "./db";
+import { startIngestionService } from "./ingestion-service";
 
 dotenv.config();
 
@@ -30,13 +31,13 @@ const start = async () => {
     await initializeDatabase();
     server.log.info("Database initialization complete.");
 
-    const port = parseInt(process.env.DB_PORT || "3000", 10);
-    await server.listen({
-      port: port,
-      host: process.env.DB_HOST || "0.0.0.0",
-    });
+    startIngestionService();
+    server.log.info("AIS Ingestion Service initiated.");
+
+    const port = parseInt(process.env.PORT || "3000", 10);
+    await server.listen({ port: port, host: "0.0.0.0" });
   } catch (err) {
-    server.log.error("Error starting server:", err);
+    server.log.error("Error during server startup:", err);
     process.exit(1);
   }
 };
