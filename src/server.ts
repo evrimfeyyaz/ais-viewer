@@ -1,46 +1,31 @@
 import dotenv from "dotenv";
-import Fastify from "fastify";
-import pool, { initializeDatabase } from "./db";
-import { startIngestionService } from "./ingestion-service";
-import { startMaintenanceSchedule } from "./maintenance-service";
+import { initializeDatabase } from "./db";
+import { startIngestionService } from "./services/ingestion-service";
+import { startMaintenanceSchedule } from "./services/maintenance-service";
+import { setup } from "./setup";
 
 dotenv.config();
 
-const server = Fastify({
-  logger: true,
-});
+async function start() {
+  const app = setup();
 
-server.get("/health", async (_request, reply) => {
-  try {
-    const client = await pool.connect();
-    try {
-      const result = await client.query("SELECT NOW()");
-      reply.code(200).send({ status: "ok", db_time: result.rows[0].now });
-    } finally {
-      client.release();
-    }
-  } catch (err) {
-    server.log.error("Health check failed:", err);
-    reply.code(503).send({ status: "error", error: "Database connection failed" });
-  }
-});
-
-const start = async () => {
   try {
     await initializeDatabase();
-    server.log.info("Database initialization complete.");
+    app.log.info("Database initialization complete.");
 
     startIngestionService();
-    server.log.info("AIS Ingestion Service initiated.");
-
-    const port = parseInt(process.env.PORT || "3000", 10);
-    await server.listen({ port: port, host: "0.0.0.0" });
+    app.log.info("AIS Ingestion Service initiated.");
 
     startMaintenanceSchedule();
+
+    const port = parseInt(process.env.PORT || "3000", 10);
+    const host = "0.0.0.0";
+    await app.listen({ port: port, host: host });
   } catch (err) {
-    server.log.error("Error during server startup:", err);
+    const logger = app ? app.log : console;
+    logger.error("Error during server startup:", err);
     process.exit(1);
   }
-};
+}
 
 start();
