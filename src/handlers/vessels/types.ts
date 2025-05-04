@@ -5,11 +5,11 @@
  */
 export type VesselQueryString = {
   /** The minimum longitude of the bounding box. */
-  minLon: number;
+  "min-lon": number;
   /** The minimum latitude of the bounding box. */
-  minLat: number;
+  "min-lat": number;
   /** The maximum longitude of the bounding box. */
-  maxLon: number;
+  "max-lon": number;
   /** The maximum latitude of the bounding box. */
-  maxLat: number;
+  "max-lat": number;
 };

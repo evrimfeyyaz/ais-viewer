@@ -11,12 +11,12 @@ const VESSEL_DATA_FRESHNESS_INTERVAL = "2 minutes";
 
 const vesselQueryStringSchema = {
   type: "object",
-  required: ["minLon", "minLat", "maxLon", "maxLat"],
+  required: ["min-lon", "min-lat", "max-lon", "max-lat"],
   properties: {
-    minLon: { type: "number", minimum: -180, maximum: 180 },
-    minLat: { type: "number", minimum: -90, maximum: 90 },
-    maxLon: { type: "number", minimum: -180, maximum: 180 },
-    maxLat: { type: "number", minimum: -90, maximum: 90 },
+    "min-lon": { type: "number", minimum: -180, maximum: 180 },
+    "min-lat": { type: "number", minimum: -90, maximum: 90 },
+    "max-lon": { type: "number", minimum: -180, maximum: 180 },
+    "max-lat": { type: "number", minimum: -90, maximum: 90 },
   },
 };
 
@@ -31,7 +31,12 @@ export const vesselRoutes: FastifyPluginAsync = async (fastify: FastifyInstance)
     "/api/vessels",
     vesselRouteOptions,
     async (request, reply) => {
-      const { minLon, minLat, maxLon, maxLat } = request.query;
+      const {
+        "min-lon": minLon,
+        "min-lat": minLat,
+        "max-lon": maxLon,
+        "max-lat": maxLat,
+      } = request.query;
 
       const sqlQuery = `
             SELECT
