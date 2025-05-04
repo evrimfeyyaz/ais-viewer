@@ -43,7 +43,7 @@ async function upsertVesselPosition(
 }
 
 export async function processPositionReport(report: PositionReport) {
-  const { UserID: mmsi, Latitude: latitude, Longitude: longitude, CoG: course } = report;
+  const { UserID: mmsi, Latitude: latitude, Longitude: longitude, Cog: course } = report;
 
   if (!isValidPosition(mmsi, latitude, longitude)) {
     return;
