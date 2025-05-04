@@ -62,11 +62,9 @@ export function handleWebSocketUnexpectedResponse(
   ws: WebSocket,
   _req: http.ClientRequest,
   res: http.IncomingMessage,
-  reconnectFn: () => void,
 ) {
   console.warn(
     `[Ingestion] Unexpected HTTP response during WebSocket handshake: ${res.statusCode} ${res.statusMessage}`,
   );
   ws.terminate();
-  setTimeout(reconnectFn, RECONNECT_DELAY_MS);
 }

@@ -24,9 +24,7 @@ function connectToAISStream() {
   ws.on("message", handleWebSocketMessage);
   ws.on("error", handleWebSocketError);
   ws.on("close", (code, reason) => handleWebSocketClose(ws, code, reason, connectToAISStream));
-  ws.on("unexpected-response", (req, res) =>
-    handleWebSocketUnexpectedResponse(ws, req, res, connectToAISStream),
-  );
+  ws.on("unexpected-response", (req, res) => handleWebSocketUnexpectedResponse(ws, req, res));
 }
 
 export function startIngestionService() {
