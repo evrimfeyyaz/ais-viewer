@@ -1,6 +1,6 @@
 import cors from "@fastify/cors";
 import Fastify, { FastifyInstance } from "fastify";
-import { routes } from "./routes";
+import { routes } from "./routes.js";
 
 /**
  * Set up the Fastify application instance.

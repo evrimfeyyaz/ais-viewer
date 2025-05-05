@@ -1,7 +1,7 @@
 import * as http from "http";
 import WebSocket from "ws";
-import { processPositionReport } from "./message-processors";
-import { isPositionReportMessage } from "./types";
+import { processPositionReport } from "./message-processors.js";
+import { isPositionReportMessage } from "./types.js";
 
 const RECONNECT_DELAY_MS = 10000; // 10 seconds
 

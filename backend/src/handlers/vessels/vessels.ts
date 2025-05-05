@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, RouteShorthandOptions } from "fastify";
-import pool from "../../db";
-import { VesselQueryString } from "./types";
+import pool from "../../db.js";
+import { VesselQueryString } from "./types.js";
 
 /**
  * The interval to consider vessel data as fresh.

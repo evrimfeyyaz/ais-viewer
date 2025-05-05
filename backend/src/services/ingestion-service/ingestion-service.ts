@@ -5,7 +5,7 @@ import {
   handleWebSocketMessage,
   handleWebSocketOpen,
   handleWebSocketUnexpectedResponse,
-} from "./websocket-handlers";
+} from "./websocket-handlers.js";
 
 const AISSTREAM_URL = "wss://stream.aisstream.io/v0/stream";
 

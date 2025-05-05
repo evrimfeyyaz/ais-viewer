@@ -1,4 +1,4 @@
-import pool from "../db";
+import pool from "../db.js";
 
 const MAX_AGE_INTERVAL = "1 hour"; // How old records must be to be deleted
 const CLEANUP_INTERVAL_MS = 15 * 60 * 1000; // How often to run the cleanup (15 minutes)

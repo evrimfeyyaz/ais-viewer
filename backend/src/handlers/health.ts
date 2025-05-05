@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginAsync } from "fastify";
-import pool from "../db";
+import pool from "../db.js";
 
 /**
  * The health check endpoint.

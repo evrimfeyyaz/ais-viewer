@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
-import { initializeDatabase } from "./db";
-import { startIngestionService } from "./services/ingestion-service";
-import { startMaintenanceSchedule } from "./services/maintenance-service";
-import { setup } from "./setup";
+import { initializeDatabase } from "./db.js";
+import { startIngestionService } from "./services/ingestion-service/ingestion-service.js";
+import { startMaintenanceSchedule } from "./services/maintenance-service.js";
+import { setup } from "./setup.js";
 
 dotenv.config();
 

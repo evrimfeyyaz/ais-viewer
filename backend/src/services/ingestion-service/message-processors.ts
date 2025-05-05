@@ -1,5 +1,5 @@
-import pool from "../../db";
-import { PositionReport } from "./types";
+import pool from "../../db.js";
+import { PositionReport } from "./types.js";
 
 /**
  * Validates the latitude and longitude values.
