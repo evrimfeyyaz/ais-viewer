@@ -1,12 +1,14 @@
 {
   "name": "ais-viewer-web",
   "version": "0.0.1",
-  "description": "",
-  "license": "MIT",
-  "author": "Evrim Feyyaz Persembe",
-  "type": "commonjs",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
   }
 }
