@@ -1,10 +1,6 @@
 import maplibregl, { GeoJSONSource, Map, type Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-
-document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
-  <div id="map" style="width: 100%; height: 100vh;"></div>
-`;
-
+import "./style.css";
 const VESSELS_SOURCE_ID = "vessels-source";
 const VESSELS_LAYER_ID = "vessels-layer";
 const SHIP_ICON_ID = "ship-icon";
@@ -21,6 +17,8 @@ type VesselData = {
 };
 
 let activePopup: Popup | null = null;
+
+const zoomMessageElement = document.getElementById("zoom-message");
 
 /**
  * Transforms the raw vessel data array from the API into a GeoJSON FeatureCollection.
@@ -47,6 +45,20 @@ function transformToGeoJSON(
     type: "FeatureCollection",
     features: features,
   };
+}
+
+function updateZoomMessageVisibility(
+  map: Map,
+  messageElement: HTMLElement | null,
+) {
+  if (!messageElement) return;
+
+  const zoom = map.getZoom();
+  if (zoom < MIN_ZOOM_LEVEL) {
+    messageElement.style.display = "block"; // Show message
+  } else {
+    messageElement.style.display = "none"; // Hide message
+  }
 }
 
 /**
@@ -108,6 +120,8 @@ const map = new maplibregl.Map({
 
 map.on("load", async () => {
   console.log("Map loaded.");
+
+  updateZoomMessageVisibility(map, zoomMessageElement);
 
   const shipIconResponse = await map.loadImage(SHIP_ICON_PATH);
   const shipIcon = shipIconResponse.data;
@@ -223,5 +237,6 @@ map.on("load", async () => {
   map.on("zoomend", () => {
     console.log(`Map zoom ended. Zoom: ${map.getZoom().toFixed(2)}`);
     updateVessels(map);
+    updateZoomMessageVisibility(map, zoomMessageElement);
   });
 });
