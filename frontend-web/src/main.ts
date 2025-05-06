@@ -181,6 +181,31 @@ map.on("load", async () => {
       .setLngLat(coordinates)
       .setHTML(popupContent)
       .addTo(map);
+
+    if (e.originalEvent) {
+      e.originalEvent.stopPropagation();
+    }
+  });
+
+  map.on("mouseenter", VESSELS_LAYER_ID, () => {
+    map.getCanvas().style.cursor = "pointer";
+  });
+  map.on("mouseleave", VESSELS_LAYER_ID, () => {
+    map.getCanvas().style.cursor = "";
+  });
+
+  map.on("click", (e) => {
+    const featuresUnderClick = map.queryRenderedFeatures(e.point, {
+      layers: [VESSELS_LAYER_ID],
+    });
+
+    if (
+      activePopup &&
+      (!featuresUnderClick || featuresUnderClick.length === 0)
+    ) {
+      activePopup.remove();
+      activePopup = null;
+    }
   });
 
   updateVessels(map);
