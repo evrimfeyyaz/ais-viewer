@@ -1,4 +1,4 @@
-import maplibregl, { GeoJSONSource, Map } from 'maplibre-gl';
+import maplibregl, { GeoJSONSource, Map, type Popup } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -14,10 +14,13 @@ const UPDATE_INTERVAL_MS = 10000; // 10 seconds
 
 type VesselData = {
   mmsi: number;
+  name: string;
   lat: number;
   lon: number;
-  course: number | null;
+  course: number;
 }
+
+let activePopup: Popup | null = null;
 
 /**
  * Transforms the raw vessel data array from the API into a GeoJSON FeatureCollection.
@@ -33,7 +36,8 @@ function transformToGeoJSON(vessels: VesselData[]): GeoJSON.FeatureCollection<Ge
       },
       properties: {
           mmsi: vessel.mmsi,
-          course: vessel.course ?? 0, // Use 0 if course is null for rotation property
+          course: vessel.course,
+          name: vessel.name
       }
   }));
 
@@ -117,7 +121,7 @@ map.on('load', async () => {
       minzoom: MIN_ZOOM_LEVEL,
       layout: {
           'icon-image': SHIP_ICON_ID,
-          'icon-size': 0.5,
+          'icon-size': 0.25,
           'icon-rotate': ['get', 'course'],
           'icon-rotation-alignment': 'map',
           'icon-allow-overlap': true,
@@ -125,6 +129,47 @@ map.on('load', async () => {
       }
   });
   console.log('Vessel source and layer added.');
+
+  map.on('click', VESSELS_LAYER_ID, (e) => {
+    if (activePopup) {
+        activePopup.remove();
+        activePopup = null;
+    }
+
+    if (!e.features || e.features.length === 0) {
+        return;
+    }
+
+    const feature = e.features[0];
+    if (feature.geometry.type !== 'Point') {
+        return;
+    }
+
+    const coordinates = feature.geometry.coordinates.slice() as [number, number];
+    const properties = feature.properties;
+    const vesselName = properties?.name.trim() || 'Unnamed Vessel';
+    const mmsi = properties.mmsi;
+
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    const popupContent = `
+        <div style="font-family: sans-serif; font-size: 14px;">
+            <strong>${vesselName}</strong><br>
+            MMSI: ${mmsi}
+        </div>
+    `;
+
+    activePopup = new maplibregl.Popup({
+        closeButton: true,
+        closeOnClick: false,
+        offset: 15
+    })
+    .setLngLat(coordinates)
+    .setHTML(popupContent)
+    .addTo(map);
+});
 
   updateVessels(map);
 
@@ -140,5 +185,4 @@ map.on('load', async () => {
       console.log(`Map zoom ended. Zoom: ${map.getZoom().toFixed(2)}`);
       updateVessels(map);
   });
-
 });
