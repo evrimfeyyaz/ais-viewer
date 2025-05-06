@@ -73,9 +73,11 @@ export function isPositionReportMessage(message: unknown): message is PositionRe
   const {
     MessageType,
     Message: { PositionReport },
+    MetaData,
   } = message as {
     MessageType: string;
     Message: { PositionReport: PositionReport };
+    MetaData: AISMetaData;
   };
 
   return (
@@ -88,6 +90,11 @@ export function isPositionReportMessage(message: unknown): message is PositionRe
     typeof PositionReport.RateOfTurn === "number" &&
     typeof PositionReport.Timestamp === "number" &&
     typeof PositionReport.TrueHeading === "number" &&
-    typeof PositionReport.Valid === "boolean"
+    typeof PositionReport.Valid === "boolean" &&
+    typeof MetaData.MMSI === "number" &&
+    typeof MetaData.ShipName === "string" &&
+    typeof MetaData.latitude === "number" &&
+    typeof MetaData.longitude === "number" &&
+    typeof MetaData.time_utc === "string"
   );
 }

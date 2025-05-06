@@ -1,5 +1,5 @@
 import pool from "../../db.js";
-import { PositionReport } from "./types.js";
+import { PositionReportMessage } from "./types.js";
 
 /**
  * Validates the latitude and longitude values.
@@ -22,32 +22,40 @@ async function upsertVesselPosition(
   mmsi: number,
   longitude: number,
   latitude: number,
-  course: number | undefined,
+  course: number,
+  name: string,
 ) {
   const validCourse = typeof course === "number" ? course : null;
 
   const upsertQuery = `
-        INSERT INTO vessels (mmsi, last_seen, geom, course)
-        VALUES ($1, NOW(), ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography, $4)
+        INSERT INTO vessels (mmsi, last_seen, geom, course, name)
+        VALUES ($1, NOW(), ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography, $4, $5)
         ON CONFLICT (mmsi) DO UPDATE
         SET last_seen = EXCLUDED.last_seen,
             geom = EXCLUDED.geom,
-            course = EXCLUDED.course;
+            course = EXCLUDED.course,
+            name = EXCLUDED.name;
     `;
 
   try {
-    await pool.query(upsertQuery, [mmsi, longitude, latitude, validCourse]);
+    await pool.query(upsertQuery, [mmsi, longitude, latitude, validCourse, name]);
   } catch (err) {
     console.error(`[Ingestion] Error upserting data for MMSI ${mmsi}:`, err);
   }
 }
 
-export async function processPositionReport(report: PositionReport) {
-  const { UserID: mmsi, Latitude: latitude, Longitude: longitude, Cog: course } = report;
+export async function processPositionReportMessage(message: PositionReportMessage) {
+  const {
+    UserID: mmsi,
+    Latitude: latitude,
+    Longitude: longitude,
+    Cog: course,
+  } = message.Message.PositionReport;
+  const { ShipName: name } = message.MetaData;
 
   if (!isValidPosition(mmsi, latitude, longitude)) {
     return;
   }
 
-  await upsertVesselPosition(mmsi, longitude, latitude, course);
+  await upsertVesselPosition(mmsi, longitude, latitude, course, name);
 }

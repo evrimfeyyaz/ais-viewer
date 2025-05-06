@@ -1,6 +1,6 @@
 import * as http from "http";
 import WebSocket from "ws";
-import { processPositionReport } from "./message-processors.js";
+import { processPositionReportMessage } from "./message-processors.js";
 import { isPositionReportMessage } from "./types.js";
 
 const RECONNECT_DELAY_MS = 10000; // 10 seconds
@@ -30,7 +30,7 @@ export async function handleWebSocketMessage(data: WebSocket.RawData) {
     const message = JSON.parse(messageString);
 
     if (isPositionReportMessage(message)) {
-      await processPositionReport(message.Message.PositionReport);
+      await processPositionReportMessage(message);
     } else {
       console.log("[Ingestion] Received non-PositionReport message type:", message.MessageType);
     }

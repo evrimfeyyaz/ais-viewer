@@ -42,6 +42,7 @@ export const vesselRoutes: FastifyPluginAsync = async (fastify: FastifyInstance)
             SELECT
                 mmsi,
                 course,
+                name,
                 ST_Y(geom::geometry) as latitude,
                 ST_X(geom::geometry) as longitude
             FROM vessels
@@ -59,7 +60,8 @@ export const vesselRoutes: FastifyPluginAsync = async (fastify: FastifyInstance)
           mmsi: row.mmsi,
           lat: parseFloat(row.latitude),
           lon: parseFloat(row.longitude),
-          course: row.course === null ? null : parseFloat(row.course),
+          course: parseFloat(row.course),
+          name: row.name,
         }));
 
         fastify.log.info(
