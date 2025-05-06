@@ -4,6 +4,7 @@ import {
   handleWebSocketError,
   handleWebSocketMessage,
   handleWebSocketOpen,
+  handleWebSocketPong,
   handleWebSocketUnexpectedResponse,
 } from "./websocket-handlers.js";
 
@@ -21,10 +22,11 @@ function connectToAISStream() {
   const ws = new WebSocket(AISSTREAM_URL);
 
   ws.on("open", () => handleWebSocketOpen(ws, apiKey));
+  ws.on("pong", handleWebSocketPong);
   ws.on("message", handleWebSocketMessage);
-  ws.on("error", handleWebSocketError);
+  ws.on("error", (error) => handleWebSocketError(ws, error));
   ws.on("close", (code, reason) => handleWebSocketClose(ws, code, reason, connectToAISStream));
-  ws.on("unexpected-response", (req, res) => handleWebSocketUnexpectedResponse(ws, req, res));
+  ws.on("unexpected-response", (_req, res) => handleWebSocketUnexpectedResponse(ws, res));
 }
 
 export function startIngestionService() {

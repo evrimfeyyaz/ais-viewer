@@ -4,6 +4,36 @@ import { processPositionReportMessage } from "./message-processors.js";
 import { isPositionReportMessage } from "./types.js";
 
 const RECONNECT_DELAY_MS = 10000; // 10 seconds
+const PING_INTERVAL_MS = 30000; // Send a ping every 30 seconds
+const PONG_TIMEOUT_MS = 10000;
+
+let heartBeatInterval: NodeJS.Timeout;
+let pongTimeout: NodeJS.Timeout;
+
+function clearTimers() {
+  if (heartBeatInterval) clearInterval(heartBeatInterval);
+  if (pongTimeout) clearTimeout(pongTimeout);
+}
+
+function scheduleHeartbeat(ws: WebSocket) {
+  clearTimers();
+
+  heartBeatInterval = setInterval(() => {
+    if (ws.readyState === WebSocket.OPEN) {
+      console.log("[Ingestion] Sending WebSocket ping...");
+      ws.ping();
+
+      pongTimeout = setTimeout(() => {
+        console.warn("[Ingestion] WebSocket pong timeout. Connection likely dead. Terminating.");
+        ws.terminate(); // This will trigger the 'close' handler and attempt to reconnect.
+      }, PONG_TIMEOUT_MS);
+    } else {
+      // If socket is not open, clear interval and let 'close' handler deal with it
+      console.log("[Ingestion] WebSocket not open, clearing heartbeat.");
+      clearTimers();
+    }
+  }, PING_INTERVAL_MS);
+}
 
 export function handleWebSocketOpen(ws: WebSocket, apiKey: string) {
   console.log("[Ingestion] WebSocket connection opened. Subscribing to messages...");
@@ -22,6 +52,12 @@ export function handleWebSocketOpen(ws: WebSocket, apiKey: string) {
       console.error("[Ingestion] Error sending subscription message:", err);
     }
   });
+  scheduleHeartbeat(ws);
+}
+
+export function handleWebSocketPong() {
+  console.log("[Ingestion] WebSocket pong received.");
+  clearTimeout(pongTimeout);
 }
 
 export async function handleWebSocketMessage(data: WebSocket.RawData) {
@@ -40,8 +76,9 @@ export async function handleWebSocketMessage(data: WebSocket.RawData) {
   }
 }
 
-export function handleWebSocketError(error: Error) {
+export function handleWebSocketError(ws: WebSocket, error: Error) {
   console.error("[Ingestion] WebSocket error:", error.message);
+  ws.terminate();
 }
 
 export function handleWebSocketClose(
@@ -53,16 +90,12 @@ export function handleWebSocketClose(
   console.log(
     `[Ingestion] WebSocket connection closed. Code: ${code}, Reason: ${reason ? reason.toString() : "No reason given"}`,
   );
+  clearTimers();
   console.log(`[Ingestion] Attempting to reconnect in ${RECONNECT_DELAY_MS / 1000} seconds...`);
-  ws.terminate(); // Ensure connection is fully terminated before retrying
   setTimeout(reconnectFn, RECONNECT_DELAY_MS);
 }
 
-export function handleWebSocketUnexpectedResponse(
-  ws: WebSocket,
-  _req: http.ClientRequest,
-  res: http.IncomingMessage,
-) {
+export function handleWebSocketUnexpectedResponse(ws: WebSocket, res: http.IncomingMessage) {
   console.warn(
     `[Ingestion] Unexpected HTTP response during WebSocket handshake: ${res.statusCode} ${res.statusMessage}`,
   );
