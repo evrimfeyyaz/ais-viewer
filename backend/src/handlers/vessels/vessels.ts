@@ -47,7 +47,7 @@ export const vesselRoutes: FastifyPluginAsync = async (fastify: FastifyInstance)
                 ST_X(geom::geometry) as longitude
             FROM vessels
             WHERE
-                last_seen >= NOW() - $5::interval
+                timestamp >= NOW() - $5::interval
                 AND geom && ST_MakeEnvelope($1, $2, $3, $4, 4326);
         `;
       const params = [minLon, minLat, maxLon, maxLat, VESSEL_DATA_FRESHNESS_INTERVAL];

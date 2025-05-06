@@ -24,21 +24,20 @@ async function upsertVesselPosition(
   latitude: number,
   course: number,
   name: string,
+  timestamp: string,
 ) {
-  const validCourse = typeof course === "number" ? course : null;
-
   const upsertQuery = `
-        INSERT INTO vessels (mmsi, last_seen, geom, course, name)
-        VALUES ($1, NOW(), ST_SetSRID(ST_MakePoint($2, $3), 4326)::geography, $4, $5)
+        INSERT INTO vessels (mmsi, timestamp, geom, course, name)
+        VALUES ($1, $2, ST_SetSRID(ST_MakePoint($3, $4), 4326)::geography, $5, $6)
         ON CONFLICT (mmsi) DO UPDATE
-        SET last_seen = EXCLUDED.last_seen,
+        SET timestamp = EXCLUDED.timestamp,
             geom = EXCLUDED.geom,
             course = EXCLUDED.course,
             name = EXCLUDED.name;
     `;
 
   try {
-    await pool.query(upsertQuery, [mmsi, longitude, latitude, validCourse, name]);
+    await pool.query(upsertQuery, [mmsi, timestamp, longitude, latitude, course, name]);
   } catch (err) {
     console.error(`[Ingestion] Error upserting data for MMSI ${mmsi}:`, err);
   }
@@ -51,11 +50,13 @@ export async function processPositionReportMessage(message: PositionReportMessag
     Longitude: longitude,
     Cog: course,
   } = message.Message.PositionReport;
-  const { ShipName: name } = message.MetaData;
+  const { ShipName: name, time_utc: timestamp } = message.MetaData;
 
   if (!isValidPosition(mmsi, latitude, longitude)) {
     return;
   }
 
-  await upsertVesselPosition(mmsi, longitude, latitude, course, name);
+  const formattedTimestamp = new Date(timestamp.replace(" UTC", "Z")).toISOString();
+
+  await upsertVesselPosition(mmsi, longitude, latitude, course, name, formattedTimestamp);
 }

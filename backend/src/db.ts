@@ -10,13 +10,13 @@ pool.on("error", (err) => {
 const createTableQuery = `
 CREATE TABLE IF NOT EXISTS vessels (
     mmsi INT PRIMARY KEY,                 -- Maritime Mobile Service Identity (unique identifier)
-    last_seen TIMESTAMPTZ NOT NULL,       -- Timestamp of the last received position report (timezone aware)
+    timestamp TIMESTAMPTZ NOT NULL,       -- Timestamp of the last received position report (timezone aware)
     geom GEOGRAPHY(POINT, 4326) NOT NULL, -- Vessel position using GEOGRAPHY type for accurate global calculations (WGS84 SRID 4326)
     course REAL NOT NULL,                 -- Course over ground in degrees
     name TEXT NOT NULL                    -- Vessel name
 );
 
-CREATE INDEX IF NOT EXISTS vessels_last_seen_idx ON vessels (last_seen);
+CREATE INDEX IF NOT EXISTS vessels_timestamp_idx ON vessels (timestamp);
 
 CREATE INDEX IF NOT EXISTS vessels_geom_idx ON vessels USING GIST (geom);
 `;

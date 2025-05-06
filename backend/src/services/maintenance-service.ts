@@ -11,7 +11,7 @@ async function deleteOldVessels() {
 
   const deleteQuery = `
         DELETE FROM vessels
-        WHERE last_seen < NOW() - INTERVAL '${MAX_AGE_INTERVAL}';
+        WHERE timestamp < NOW() - INTERVAL '${MAX_AGE_INTERVAL}';
     `;
 
   try {
