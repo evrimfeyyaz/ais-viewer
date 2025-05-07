@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync, RouteShorthandOptions } from "fastify";
 import pool from "../../db.js";
 import { VesselQueryString } from "./types.js";
+import { normalizeLongitude } from "./utils.js";
 
 /**
  * The interval to consider vessel data as fresh.
@@ -13,9 +14,9 @@ const vesselQueryStringSchema = {
   type: "object",
   required: ["min-lon", "min-lat", "max-lon", "max-lat"],
   properties: {
-    "min-lon": { type: "number", minimum: -180, maximum: 180 },
+    "min-lon": { type: "number" },
     "min-lat": { type: "number", minimum: -90, maximum: 90 },
-    "max-lon": { type: "number", minimum: -180, maximum: 180 },
+    "max-lon": { type: "number" },
     "max-lat": { type: "number", minimum: -90, maximum: 90 },
   },
 };
@@ -38,6 +39,9 @@ export const vesselRoutes: FastifyPluginAsync = async (fastify: FastifyInstance)
         "max-lat": maxLat,
       } = request.query;
 
+      const normalizedMinLon = normalizeLongitude(minLon);
+      const normalizedMaxLon = normalizeLongitude(maxLon);
+
       const sqlQuery = `
             SELECT
                 mmsi,
@@ -50,10 +54,18 @@ export const vesselRoutes: FastifyPluginAsync = async (fastify: FastifyInstance)
                 timestamp >= NOW() - $5::interval
                 AND geom && ST_MakeEnvelope($1, $2, $3, $4, 4326);
         `;
-      const params = [minLon, minLat, maxLon, maxLat, VESSEL_DATA_FRESHNESS_INTERVAL];
+      const params = [
+        normalizedMinLon,
+        minLat,
+        normalizedMaxLon,
+        maxLat,
+        VESSEL_DATA_FRESHNESS_INTERVAL,
+      ];
 
       try {
-        fastify.log.info(`Querying vessels for bbox: [${minLon}, ${minLat}, ${maxLon}, ${maxLat}]`);
+        fastify.log.info(
+          `Querying vessels for bbox: [${normalizedMinLon}, ${minLat}, ${normalizedMaxLon}, ${maxLat}]`,
+        );
         const result = await pool.query(sqlQuery, params);
 
         const vessels = result.rows.map((row) => ({
