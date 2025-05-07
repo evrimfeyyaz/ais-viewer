@@ -15,6 +15,12 @@ const VESSELS_LAYER_ID = "vessels-layer";
 /** The minimum zoom level at which vessels are displayed. */
 const MIN_ZOOM_LEVEL = 12;
 
+/**
+ * The factor by which the map bounds are expanded for when we're fetching vessels.
+ * This is to fetch vessels that are near the edges of the visible section of the map thus improving the panning experience.
+ * */
+const BOUNDS_EXPANSION_FACTOR = 1;
+
 /** The interval at which the vessels are updated in milliseconds. */
 const UPDATE_INTERVAL_MS = 10000; // 10 seconds
 
@@ -224,9 +230,22 @@ export class MapManager {
     const maxLon = bounds.getEast();
     const maxLat = bounds.getNorth();
 
-    console.log(`[${minLon.toFixed(0)}, ${maxLon.toFixed(0)}]`);
+    const widthDegrees = maxLon - minLon;
+    const heightDegrees = maxLat - minLat;
 
-    const apiUrl = `/api/vessels?min-lon=${minLon}&min-lat=${minLat}&max-lon=${maxLon}&max-lat=${maxLat}`;
+    const lonExpansion = (widthDegrees * BOUNDS_EXPANSION_FACTOR) / 2;
+    const latExpansion = (heightDegrees * BOUNDS_EXPANSION_FACTOR) / 2;
+
+    const expandedMinLon = minLon - lonExpansion;
+    const expandedMaxLon = maxLon + lonExpansion;
+    let expandedMinLat = minLat - latExpansion;
+    let expandedMaxLat = maxLat + latExpansion;
+
+    // Clamp latitudes to valid range [-90, 90]
+    expandedMinLat = Math.max(-90, expandedMinLat);
+    expandedMaxLat = Math.min(90, expandedMaxLat);
+
+    const apiUrl = `/api/vessels?min-lon=${expandedMinLon}&min-lat=${expandedMinLat}&max-lon=${expandedMaxLon}&max-lat=${expandedMaxLat}`;
 
     try {
       const response = await fetch(apiUrl);
