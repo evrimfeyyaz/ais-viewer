@@ -70,27 +70,28 @@ export type PositionReportMessage = AISMessage & {
 export function isPositionReportMessage(message: unknown): message is PositionReportMessage {
   if (typeof message !== "object" || message === null) return false;
 
-  const {
-    MessageType,
-    Message: { PositionReport },
-    MetaData,
-  } = message as {
-    MessageType: string;
-    Message: { PositionReport: PositionReport };
-    MetaData: AISMetaData;
-  };
+  const { MessageType, Message, MetaData } = message as AISMessage;
+  if (
+    typeof MessageType !== "string" ||
+    typeof Message !== "object" ||
+    typeof MetaData !== "object"
+  )
+    return false;
+
+  const positionReport = Message.PositionReport as PositionReport;
+  if (typeof positionReport !== "object" || positionReport === null) return false;
 
   return (
     MessageType === "PositionReport" &&
-    typeof PositionReport.UserID === "number" &&
-    typeof PositionReport.Latitude === "number" &&
-    typeof PositionReport.Longitude === "number" &&
-    typeof PositionReport.Cog === "number" &&
-    typeof PositionReport.Sog === "number" &&
-    typeof PositionReport.RateOfTurn === "number" &&
-    typeof PositionReport.Timestamp === "number" &&
-    typeof PositionReport.TrueHeading === "number" &&
-    typeof PositionReport.Valid === "boolean" &&
+    typeof positionReport.UserID === "number" &&
+    typeof positionReport.Latitude === "number" &&
+    typeof positionReport.Longitude === "number" &&
+    typeof positionReport.Cog === "number" &&
+    typeof positionReport.Sog === "number" &&
+    typeof positionReport.RateOfTurn === "number" &&
+    typeof positionReport.Timestamp === "number" &&
+    typeof positionReport.TrueHeading === "number" &&
+    typeof positionReport.Valid === "boolean" &&
     typeof MetaData.MMSI === "number" &&
     typeof MetaData.ShipName === "string" &&
     typeof MetaData.latitude === "number" &&

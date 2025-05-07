@@ -41,8 +41,8 @@ export function handleWebSocketOpen(ws: WebSocket, apiKey: string) {
     APIKey: apiKey,
     BoundingBoxes: [
       [
-        [-180, -90],
-        [180, 90],
+        [-90, -180],
+        [90, 180],
       ],
     ],
     FilterMessageTypes: ["PositionReport"],
