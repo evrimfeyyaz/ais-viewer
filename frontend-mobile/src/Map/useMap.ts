@@ -89,5 +89,11 @@ export function useMap(): UseMapReturn {
     [updateVessels],
   );
 
-  return { mapViewRef, cameraRef, geoJsonData, minZoomLevel, updateVessels };
+  return {
+    mapViewRef,
+    cameraRef,
+    geoJsonData,
+    minZoomLevel,
+    updateVessels,
+  };
 }
