@@ -8,10 +8,11 @@ import {
 } from "@maplibre/maplibre-react-native";
 import type GeoJSON from "geojson";
 import { ComponentProps, useCallback, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import { VesselGeoJSONData } from "./types";
 import { useMap } from "./useMap";
 import VesselPopup from "./VesselPopup";
+import ZoomMessage from "./ZoomMessage";
 
 /** The type of the onPress handler for the ShapeSource component. */
 type ShapeSourceOnPressHandler = NonNullable<ComponentProps<typeof ShapeSource>["onPress"]>;
@@ -125,11 +126,7 @@ export default function Map() {
           />
         </ShapeSource>
       </MapView>
-      {showZoomMessage && (
-        <View style={styles.zoomMessageContainer}>
-          <Text style={styles.zoomMessage}>Zoom in to see vessels</Text>
-        </View>
-      )}
+      {showZoomMessage && <ZoomMessage />}
       <VesselPopup selectedVessel={selectedVessel} onClosePress={closePopup} />
     </>
   );
@@ -138,28 +135,5 @@ export default function Map() {
 const styles = StyleSheet.create({
   map: {
     flex: 1,
-  },
-  zoomMessage: {
-    backgroundColor: "rgba(0, 0, 0, 0.75)",
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 8,
-    fontSize: 16,
-    color: "white",
-    shadowColor: "black",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 5,
-  },
-  zoomMessageContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    pointerEvents: "none",
-    alignItems: "center",
-    justifyContent: "center",
   },
 });
