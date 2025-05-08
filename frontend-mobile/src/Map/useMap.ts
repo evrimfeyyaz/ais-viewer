@@ -1,6 +1,6 @@
 import { CameraRef, MapViewRef } from "@maplibre/maplibre-react-native";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { VesselData, VesselGeoJSONData } from "./types";
+import { VesselData, VesselsGeoJSONData } from "./types";
 import { getExpandedBounds, transformToGeoJSON } from "./utils";
 
 /**
@@ -21,7 +21,7 @@ type UseMapReturn = {
   /** The ref object for the Camera component. */
   cameraRef: React.RefObject<CameraRef | null>;
   /** The GeoJSON data for the vessels. */
-  geoJsonData: VesselGeoJSONData;
+  geoJsonData: VesselsGeoJSONData;
   /** The minimum zoom level at which vessels are displayed. */
   minZoomLevel: number;
   /** Fetches the vessels data from the API and updates the GeoJSON data. */
@@ -29,7 +29,7 @@ type UseMapReturn = {
 };
 
 /** The initial, empty GeoJSON data for the vessels state. */
-const initialGeoJsonData: VesselGeoJSONData = {
+const initialGeoJsonData: VesselsGeoJSONData = {
   type: "FeatureCollection",
   features: [],
 };
@@ -40,7 +40,7 @@ export function useMap(): UseMapReturn {
 
   const minZoomLevel = 10;
 
-  const [geoJsonData, setGeoJsonData] = useState<VesselGeoJSONData>(initialGeoJsonData);
+  const [geoJsonData, setGeoJsonData] = useState<VesselsGeoJSONData>(initialGeoJsonData);
 
   const updateVessels = useCallback(async () => {
     if (!mapViewRef.current) {

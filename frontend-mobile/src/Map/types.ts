@@ -1,4 +1,4 @@
-import { FeatureCollection, Point } from "geojson";
+import { Feature, FeatureCollection, Point } from "geojson";
 
 export type VesselData = {
   /** Maritime Mobile Service Identity */
@@ -13,10 +13,18 @@ export type VesselData = {
   course: number;
 };
 
-export type VesselGeoJSONData = FeatureCollection<
+/**
+ * The GeoJSON data for the vessels.
+ */
+export type VesselsGeoJSONData = FeatureCollection<
   Point,
   { mmsi: number; course: number; name: string }
 >;
+
+/**
+ * The GeoJSON data for a single vessel.
+ */
+export type VesselGeoJSONData = Feature<Point, { mmsi: number; course: number; name: string }>;
 
 /**
  * The visible bounds of the map.

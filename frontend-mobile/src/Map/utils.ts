@@ -1,11 +1,11 @@
-import type { VesselData, VesselGeoJSONData, VisibleBounds } from "./types";
+import type { VesselData, VesselsGeoJSONData, VisibleBounds } from "./types";
 
 /**
  * Transforms the raw vessel data array from the API into a GeoJSON FeatureCollection.
  * @param vessels - Array of vessel data objects.
  * @returns GeoJSON FeatureCollection.
  */
-export function transformToGeoJSON(vessels: VesselData[]): VesselGeoJSONData {
+export function transformToGeoJSON(vessels: VesselData[]): VesselsGeoJSONData {
   const features = vessels.map((vessel) => ({
     type: "Feature" as const,
     geometry: {
