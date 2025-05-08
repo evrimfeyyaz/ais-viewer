@@ -1,14 +1,6 @@
-import { MapView } from '@maplibre/maplibre-react-native';
-import { StyleSheet } from 'react-native';
+import React from "react";
+import Map from "./src/Map/Map";
 
 export default function App() {
-  return (
-    <MapView style={styles.map} />
-  );
+  return <Map />;
 }
-
-const styles = StyleSheet.create({
-  map: {
-    flex: 1,
-  },
-});
