@@ -1,11 +1,4 @@
-import {
-  Camera,
-  Images,
-  MapView,
-  RegionPayload,
-  ShapeSource,
-  SymbolLayer,
-} from "@maplibre/maplibre-react-native";
+import { Camera, Images, MapState, MapView, ShapeSource, SymbolLayer } from "@rnmapbox/maps";
 import type GeoJSON from "geojson";
 import { ComponentProps, useCallback, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -16,6 +9,7 @@ import ZoomMessage from "./ZoomMessage";
 
 /** The type of the onPress handler for the ShapeSource component. */
 type ShapeSourceOnPressHandler = NonNullable<ComponentProps<typeof ShapeSource>["onPress"]>;
+
 /** The type of the onPress handler for the MapView component. */
 type MapViewOnPressHandler = NonNullable<ComponentProps<typeof MapView>["onPress"]>;
 
@@ -27,7 +21,6 @@ const SELECTED_SHIP_ICON_ID = "selected-ship-icon";
 export default function Map() {
   const shipIcon = require("../../assets/ship-icon.png");
   const selectedShipIcon = require("../../assets/ship-icon-selected.png");
-  const mapStyle = `https://tiles.stadiamaps.com/styles/outdoors.json?api_key=${process.env.EXPO_PUBLIC_STADIA_MAPS_API_KEY}`;
 
   const { mapViewRef, cameraRef, geoJsonData, minZoomLevel, updateVessels } = useMap();
 
@@ -35,20 +28,21 @@ export default function Map() {
   const [selectedVessel, setSelectedVessel] = useState<VesselGeoJSONData | null>(null);
 
   /**
-   * Handles the region change event of the map.
-   * This is called when the map has finished moving/zooming.
+   * Handles the map idle event (when the map has finished moving/zooming).
    */
-  const handleRegionDidChange = useCallback(
-    (feature: GeoJSON.Feature<GeoJSON.Point, RegionPayload>) => {
-      const zoomLevel = feature.properties?.zoomLevel;
-      if (zoomLevel < minZoomLevel) {
-        setShowZoomMessage(true);
-      } else {
-        setShowZoomMessage(false);
+  const handleMapIdle = useCallback(
+    (state: MapState) => {
+      if (mapViewRef.current) {
+        const zoomLevel = state.properties.zoom;
+        if (zoomLevel < minZoomLevel) {
+          setShowZoomMessage(true);
+        } else {
+          setShowZoomMessage(false);
+        }
       }
       updateVessels();
     },
-    [updateVessels, minZoomLevel],
+    [mapViewRef, minZoomLevel, updateVessels],
   );
 
   const handleVesselPress: ShapeSourceOnPressHandler = useCallback((event) => {
@@ -66,12 +60,12 @@ export default function Map() {
   }, []);
 
   const handleMapBasePress: MapViewOnPressHandler = useCallback(
-    async (feature) => {
-      if (!mapViewRef.current || !feature.properties) {
+    async (event) => {
+      if (!mapViewRef.current || !event.properties || event.geometry.type !== "Point") {
         return;
       }
 
-      const { screenPointX, screenPointY } = feature.properties;
+      const { screenPointX, screenPointY } = event.properties;
 
       try {
         const featuresInLayer = await mapViewRef.current.queryRenderedFeaturesAtPoint(
@@ -80,9 +74,9 @@ export default function Map() {
           ["vessels-layer"], // Only query the vessels layer
         );
 
-        // If no features from our 'vessels-layer' are at the tapped point,
+        // If no features from our vessels layer are at the tapped point,
         // it means the tap was on the base map or another non-vessel element.
-        if (featuresInLayer.features.length === 0) {
+        if (featuresInLayer?.features.length === 0) {
           setSelectedVessel(null);
         }
         // If features ARE found, it means a vessel was tapped.
@@ -103,8 +97,7 @@ export default function Map() {
       <MapView
         style={styles.map}
         ref={mapViewRef}
-        mapStyle={mapStyle}
-        onRegionDidChange={handleRegionDidChange}
+        onMapIdle={handleMapIdle}
         onPress={handleMapBasePress}
       >
         <Camera ref={cameraRef} zoomLevel={1} centerCoordinate={[0, 0]} />

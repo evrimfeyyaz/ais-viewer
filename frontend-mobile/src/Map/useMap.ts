@@ -1,4 +1,4 @@
-import { CameraRef, MapViewRef } from "@maplibre/maplibre-react-native";
+import { Camera, MapView } from "@rnmapbox/maps";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { VesselData, VesselsGeoJSONData } from "./types";
 import { getExpandedBounds, transformToGeoJSON } from "./utils";
@@ -17,9 +17,9 @@ const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:3
 
 type UseMapReturn = {
   /** The ref object for the MapView component. */
-  mapViewRef: React.RefObject<MapViewRef | null>;
+  mapViewRef: React.RefObject<MapView | null>;
   /** The ref object for the Camera component. */
-  cameraRef: React.RefObject<CameraRef | null>;
+  cameraRef: React.RefObject<Camera | null>;
   /** The GeoJSON data for the vessels. */
   geoJsonData: VesselsGeoJSONData;
   /** The minimum zoom level at which vessels are displayed. */
@@ -35,8 +35,8 @@ const initialGeoJsonData: VesselsGeoJSONData = {
 };
 
 export function useMap(): UseMapReturn {
-  const mapViewRef = useRef<MapViewRef>(null);
-  const cameraRef = useRef<CameraRef>(null);
+  const mapViewRef = useRef<MapView>(null);
+  const cameraRef = useRef<Camera>(null);
 
   const minZoomLevel = 10;
 
