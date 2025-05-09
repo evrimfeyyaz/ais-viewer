@@ -15,7 +15,7 @@ export function setup(): FastifyInstance {
   });
 
   app.register(cors, {
-    origin: "*",
+    origin: "http://localhost:*",
     methods: ["GET", "OPTIONS"],
   });
 
