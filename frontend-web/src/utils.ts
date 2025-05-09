@@ -1,3 +1,5 @@
+import type { RequestTransformFunction } from "maplibre-gl";
+import { isMapboxURL, transformMapboxUrl } from "maplibregl-mapbox-request-transformer";
 import type { VesselData } from "./types";
 
 /**
@@ -26,3 +28,17 @@ export function transformToGeoJSON(
     features: features,
   };
 }
+
+/**
+ * Transforms requests to be able to handle Mapbox URLs.
+ * @param url - The URL to transform.
+ * @param resourceType - The type of resource.
+ * @returns The transformed URL.
+ */
+export const transformRequest: RequestTransformFunction = (url, resourceType) => {
+  if (resourceType && isMapboxURL(url)) {
+    return transformMapboxUrl(url, resourceType, import.meta.env.VITE_MAPBOX_ACCESS_TOKEN);
+  }
+
+  return { url };
+};

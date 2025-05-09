@@ -20,6 +20,7 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
-    "maplibre-gl": "^5.4.0"
+    "maplibre-gl": "^5.4.0",
+    "maplibregl-mapbox-request-transformer": "^0.0.2"
   }
 }

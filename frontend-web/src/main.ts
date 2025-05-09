@@ -4,7 +4,7 @@ import "./style.css";
 
 new MapManager({
   container: "map",
-  style: `https://tiles.stadiamaps.com/styles/outdoors.json?api_key=${import.meta.env.VITE_STADIA_MAPS_API_KEY}`,
+  style: `https://api.mapbox.com/styles/v1/mapbox/outdoors-v11?access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`,
   center: [0, 0],
   zoom: 1,
 });

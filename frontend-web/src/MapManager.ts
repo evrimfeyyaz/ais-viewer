@@ -1,6 +1,6 @@
 import maplibregl, { GeoJSONSource, Map, Popup } from "maplibre-gl";
 import type { MapLayerClickEvent, VesselData } from "./types";
-import { transformToGeoJSON } from "./utils";
+import { transformRequest, transformToGeoJSON } from "./utils";
 
 /** The ID of the ship icon image to use in the map. */
 const SHIP_ICON_ID = "ship-icon";
@@ -49,6 +49,7 @@ export class MapManager {
       style: options.style,
       center: options.center,
       zoom: options.zoom,
+      transformRequest,
     });
 
     this.zoomMessageElement = document.getElementById("zoom-message");
