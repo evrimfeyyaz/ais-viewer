@@ -14,10 +14,10 @@ export default tseslint.config(
       ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: {
-        project: './tsconfig.json', // Adjusted for frontend
+        project: './tsconfig.json',
       },
       globals: {
-        ...globals.browser, // Changed to browser globals
+        ...globals.browser,
         ...globals.es2021,
       },
     },
@@ -30,6 +30,6 @@ export default tseslint.config(
     },
   },
   {
-    ignores: ['node_modules', 'dist', 'eslint.config.js', 'vite.config.js', 'public'], // Added vite.config.js and public
+    ignores: ['node_modules', 'dist', 'eslint.config.js', 'vite.config.js', 'public'],
   }
 ); 
