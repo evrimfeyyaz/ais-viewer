@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { initializeDatabase } from "./db.js";
-import { startIngestionService } from "./services/ingestion-service/ingestion-service.js";
-import { startMaintenanceSchedule } from "./services/maintenance-service.js";
+import { IngestionService } from "./services/ingestion-service/IngestionService.js";
+import { MaintenanceService } from "./services/MaintenanceService.js";
 import { setup } from "./setup.js";
 
 dotenv.config();
@@ -13,10 +13,13 @@ async function start() {
     await initializeDatabase();
     app.log.info("Database initialization complete.");
 
-    startIngestionService();
+    const ingestionService = new IngestionService(app.log);
+    ingestionService.start();
     app.log.info("AIS Ingestion Service initiated.");
 
-    startMaintenanceSchedule();
+    const maintenanceService = new MaintenanceService(app.log);
+    maintenanceService.start();
+    app.log.info("Maintenance Service initiated.");
 
     const port = parseInt(process.env.PORT || "3000", 10);
     const host = "0.0.0.0";
