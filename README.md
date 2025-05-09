@@ -1,4 +1,4 @@
-# AIS Viewer Project
+# AIS Viewer
 
 This project provides a system for viewing AIS (Automatic Identification System) data, composed of a backend service, a web frontend and a mobile application.
 
