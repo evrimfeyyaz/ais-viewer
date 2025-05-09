@@ -108,6 +108,18 @@ AISSTREAM_API_KEY=YOUR_AISSTREAM_IO_API_KEY
 
 This is a web application built with Vite and TypeScript, designed to display AIS data on a map using MapLibre GL JS.
 
+### Environment Variables
+
+To run the web frontend, you may need to set up the following environment variable. You can create a `.env` file in the `frontend-web` directory to store this:
+
+- `VITE_MAPTILER_API_KEY`: (Required) Your API key for [MapTiler Cloud](https://cloud.maptiler.com/) to use their map styles as a basemap.
+
+An example `.env` file in the `frontend-web` directory:
+
+```env
+VITE_MAPTILER_API_KEY=YOUR_MAPTILER_API_KEY_HERE
+```
+
 **Running the Web Frontend**
 - Navigate to the `frontend-web` directory:
   ```bash

@@ -121,7 +121,7 @@ export class MapManager {
       layout: {
         "icon-image": SHIP_ICON_ID,
         // The size of the icon is interpolated based on the zoom level.
-        "icon-size": ["interpolate", ["linear"], ["zoom"], MIN_ZOOM_LEVEL, 0.2, 20, 0.6],
+        "icon-size": ["interpolate", ["linear"], ["zoom"], MIN_ZOOM_LEVEL, 0.05, 20, 0.5],
         // The rotation of the icon is based on the course of the vessel in degrees.
         "icon-rotate": ["get", "course"],
         // Rotate the icon when the map is rotated.

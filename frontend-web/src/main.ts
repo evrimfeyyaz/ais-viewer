@@ -4,7 +4,7 @@ import "./style.css";
 
 new MapManager({
   container: "map",
-  style: "https://demotiles.maplibre.org/style.json",
+  style: `https://api.maptiler.com/maps/basic-v2/style.json?key=${import.meta.env.VITE_MAPTILER_API_KEY}`,
   center: [0, 0],
   zoom: 1,
 });
