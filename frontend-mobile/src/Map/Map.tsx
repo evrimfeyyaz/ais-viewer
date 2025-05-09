@@ -26,11 +26,11 @@ export default function Map() {
 
   const [showZoomMessage, setShowZoomMessage] = useState(false);
   const [selectedVessel, setSelectedVessel] = useState<VesselGeoJSONData | null>(null);
+  // This is needed because of a bug in the MapView component.
+  // See https://github.com/rnmapbox/maps/issues/383
+  const [_isMapReady, setIsMapReady] = useState(false);
 
-  /**
-   * Handles the map idle event (when the map has finished moving/zooming).
-   */
-  const handleMapIdle = useCallback(
+  const handleCameraChange = useCallback(
     (state: MapState) => {
       if (mapViewRef.current) {
         const zoomLevel = state.properties.zoom;
@@ -97,7 +97,9 @@ export default function Map() {
       <MapView
         style={styles.map}
         ref={mapViewRef}
-        onMapIdle={handleMapIdle}
+        onDidFinishLoadingMap={() => setIsMapReady(true)}
+        onCameraChanged={handleCameraChange}
+        // onMapIdle={handleMapIdle}
         onPress={handleMapBasePress}
       >
         <Camera ref={cameraRef} zoomLevel={1} centerCoordinate={[0, 0]} />
