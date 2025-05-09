@@ -110,14 +110,16 @@ This is a web application built with Vite and TypeScript, designed to display AI
 
 ### Environment Variables
 
-To run the web frontend, you may need to set up the following environment variable. You can create a `.env` file in the `frontend-web` directory to store this:
+To run the web frontend, you need to set up the following environment variable. You can create a `.env` file in the `frontend-web` directory to store this:
 
-- `VITE_MAPTILER_API_KEY`: (Required) Your API key for [MapTiler Cloud](https://cloud.maptiler.com/) to use their map styles as a basemap.
+- `VITE_STADIA_MAPS_API_KEY`: (Required) Your API key for [Stadia Maps](https://stadiamaps.com/) to use their map styles as a basemap.
+- `VITE_API_BASE_URL`: (Optional) Specifies the base URL for the backend API from which the frontend fetches AIS data. Defaults to `http://localhost:3000`.
 
 An example `.env` file in the `frontend-web` directory:
 
 ```env
-VITE_MAPTILER_API_KEY=YOUR_MAPTILER_API_KEY_HERE
+VITE_STADIA_MAPS_API_KEY=YOUR_STADIA_MAPS_API_KEY_HERE
+# VITE_API_BASE_URL=http://localhost:3000
 ```
 
 **Running the Web Frontend**
@@ -146,6 +148,20 @@ VITE_MAPTILER_API_KEY=YOUR_MAPTILER_API_KEY_HERE
 **Name:** `ais-viewer-mobile`
 
 This is a mobile application built with Expo (React Native) and TypeScript. It displays AIS data on a map using MapLibre GL Native.
+
+### Environment Variables
+
+To run the mobile frontend, you need to set up the following environment variables. You can create a `.env` file in the `frontend-mobile` directory to store these:
+
+- `EXPO_PUBLIC_STADIA_MAPS_API_KEY`: (Required) Your API key for [Stadia Maps](https://stadiamaps.com/) to use their map styles as a basemap.
+- `EXPO_PUBLIC_API_BASE_URL`: (Optional) Specifies the base URL for the backend API from which the frontend fetches AIS data. Defaults to `http://localhost:3000`.
+
+An example `.env` file in the `frontend-mobile` directory:
+
+```env
+EXPO_PUBLIC_STADIA_MAPS_API_KEY=YOUR_STADIA_MAPS_API_KEY_HERE
+# EXPO_PUBLIC_API_BASE_URL=http://localhost:3000
+```
 
 **Running the Mobile Frontend**
 - Navigate to the `frontend-mobile` directory:

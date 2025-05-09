@@ -27,6 +27,7 @@ const SELECTED_SHIP_ICON_ID = "selected-ship-icon";
 export default function Map() {
   const shipIcon = require("../../assets/ship-icon.png");
   const selectedShipIcon = require("../../assets/ship-icon-selected.png");
+  const mapStyle = `https://tiles.stadiamaps.com/styles/outdoors.json?api_key=${process.env.EXPO_PUBLIC_STADIA_MAPS_API_KEY}`;
 
   const { mapViewRef, cameraRef, geoJsonData, minZoomLevel, updateVessels } = useMap();
 
@@ -102,6 +103,7 @@ export default function Map() {
       <MapView
         style={styles.map}
         ref={mapViewRef}
+        mapStyle={mapStyle}
         onRegionDidChange={handleRegionDidChange}
         onPress={handleMapBasePress}
       >
@@ -117,7 +119,7 @@ export default function Map() {
                 SELECTED_SHIP_ICON_ID,
                 SHIP_ICON_ID,
               ],
-              iconSize: ["interpolate", ["linear"], ["zoom"], minZoomLevel, 0.1, 20, 0.5],
+              iconSize: ["interpolate", ["linear"], ["zoom"], minZoomLevel, 0.05, 20, 0.5],
               iconRotate: ["get", "course"],
               iconAllowOverlap: true,
               iconIgnorePlacement: true,

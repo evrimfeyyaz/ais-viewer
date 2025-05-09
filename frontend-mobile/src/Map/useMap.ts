@@ -13,7 +13,7 @@ const BOUNDS_EXPANSION_FACTOR = 1;
 const UPDATE_INTERVAL_MS = 10000; // 10 seconds
 
 /** The base URL of the API. */
-const API_BASE_URL = "http://localhost:3000";
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || "http://localhost:3000";
 
 type UseMapReturn = {
   /** The ref object for the MapView component. */

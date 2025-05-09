@@ -39,3 +39,6 @@ yarn-error.*
 # prebuild
 android/
 ios/
+
+# Environment variables
+.env
