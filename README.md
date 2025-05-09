@@ -12,8 +12,32 @@ This project provides a system for viewing AIS (Automatic Identification System)
 
 This is a Node.js backend service built with Fastify. It ingests AIS data from aisstream.io and saves the AIS data in a PostgreSQL database with the PostGIS extension. It also allows querying its data by a given bounding box.
 
+### Environment Variables
+
+To run the backend, you need to set up the following environment variables. You can create a `.env` file in the `backend` directory to store these:
+
+- `PORT`: (Optional) The port the server will listen on. Defaults to `3000`.
+- `AISSTREAM_API_KEY`: (Required) Your API key for the [aisstream.io](https://aisstream.io/) service, used for ingesting AIS data.
+- `PGUSER`: Username for the PostgreSQL database.
+- `PGPASSWORD`: Password for the PostgreSQL database.
+- `PGDATABASE`: Name of the PostgreSQL database (e.g., `ais_data`).
+- `PGPORT`: Port of the PostgreSQL server (e.g., `5432`).
+
+An example `.env` file for local development (matching `docker-compose.yml`):
+
+```env
+# .env file in the ./backend directory
+PORT=3001
+AISSTREAM_API_KEY=YOUR_AISSTREAM_IO_API_KEY
+
+# PGUSER=postgres
+# PGPASSWORD=postgres
+# PGDATABASE=ais_data
+# PGPORT=5432
+```
+
 **Running the Backend**
-- First, start the PostgreSQL database using Docker Compose (from the root directory):
+- After you set up the environment variables, start the PostgreSQL database using Docker Compose:
   ```bash
   docker-compose up -d
   ```
