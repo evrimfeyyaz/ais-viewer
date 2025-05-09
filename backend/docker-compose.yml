@@ -1,3 +1,4 @@
+name: ais_viewer
 services:
   db:
     image: ghcr.io/baosystems/postgis:16-3.4
@@ -6,6 +7,10 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "${PGPORT}:5432"
+    environment:
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE}
     restart: unless-stopped
 
 volumes:
